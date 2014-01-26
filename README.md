@@ -1,6 +1,8 @@
 # Introduction
 
-Kiwi Menu is a menu manager for Novius OS.
+Kiwi Menu is a menu manager for Novius OS. It spports nested menus with different kind of items (text, link, page, wysiwyg...). You can easily develop your own kind of item it the default ones do not fit your needs (see the Driver section in the documentation).
+
+[STILL IN DEVELOPMENT ] Display your menus anywhere using the enhancer and choose how they looks like using the templates (horizontal, vertical, etc...). You can develop your own templates (see the Template section in the documentation).
 
 # Requirements
 
