@@ -13,6 +13,7 @@ return array(
 	'drivers'	=> array(
 		'Kiwi\Menu\Driver_Text',
 		'Kiwi\Menu\Driver_Link',
+		'Kiwi\Menu\Driver_Page',
 		'Kiwi\Menu\Driver_Wysiwyg',
 	),
 );

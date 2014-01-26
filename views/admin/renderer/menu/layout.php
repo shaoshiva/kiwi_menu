@@ -29,7 +29,10 @@
 			<button data-item-driver="<?= $driver_class ?>"
 					data-item-title="New <?= $driver_name ?>"
 					data-dialog-options="<?= htmlspecialchars(\Format::forge()->to_json($dialog_options)) ?>">
-				<span class="ui-icon ui-icon-plus"></span>Add a <?= $driver_name ?>
+				<span class="icon">
+					<?= \Fuel\Core\Html::img(\Arr::get($driver_config, 'icon')) ?>
+				</span>
+				Add a <?= $driver_name ?>
 			</button>
 		<?php } ?>
     </div>
@@ -86,7 +89,7 @@ require(
 					if ($input.length) {
 						$input.val(value);
 					} else {
-						$container.append('<input type="hidden" name="'+input_name+'" value="'+value+'">');
+						$container.append($('<input type="hidden">').attr('name', input_name).val(value));
 					}
 				});
 			}
@@ -144,6 +147,9 @@ require(
 						.data('item-driver', item_driver)
 						.data('is-new', true);
 
+				// Add icon
+				$item.find('> div').prepend('<span class="icon"><img src="'+$this.find('.icon img').attr('src')+'" /></span>');
+
 				// Generates a temporary id
 				var id = 'new_'+(++temp_id_offset);
 				$item.addClass('list_'+id).data('item-id', id);
@@ -168,6 +174,7 @@ require(
 				e.preventDefault();
 				var $item = $(this).closest('li');
 				var item_driver = $item.data('item-driver');
+				var item_id = $item.data('item-id');
 
 				// Search the driver to get the dialog options
 				var dialog_options = {};
@@ -178,23 +185,47 @@ require(
 					}
                 });
 
+				// Build ajax data
+				var ajaxData = {
+                    form_id			: $container.attr('id'),
+                    mitem_driver 	: item_driver,
+                    mitem_title		: $item.find('> div .label').text().trim()
+                };
+				// Get updated data
+				$container.find('[name^="items_updates['+item_id+']"]').each(function() {
+					var $this = $(this);
+					var name = $this.attr('name');
+                    var key = name.substring(name.lastIndexOf('[') + 1, name.length - 1);
+                    var parts = key.split('.');
+					if (parts.length) {
+						// Convert dot notation to array (elsewhere fuel php will break it)
+						var arr = dotToArray(parts, $this.val());
+						$.extend(ajaxData, arr);
+                    } else {
+						ajaxData[key] = $this.val();
+					}
+				});
+
 				$(this).nosDialog($.extend({
-					contentUrl: 'admin/kiwi_menu/menu/item/ajax/edit/'+$item.data('item-id'),
+					contentUrl: 'admin/kiwi_menu/menu/item/ajax/edit/'+item_id,
 					ajax : true,
-                    ajaxData: {
-						form_id			: $container.attr('id'),
-                        mitem_driver 	: item_driver,
-                        mitem_title		: $item.find('> div .label').text().trim()
-					},
+                    ajaxData: ajaxData,
 					title: <?= \Format::forge(__('Edit an item'))->to_json() ?>,
 					height: 400,
 					width: 700
 				}, dialog_options));
             });
 
+            function dotToArray(array, value) {
+                var key = array.shift();
+                var nested = {};
+                nested[key] = array.length ? dotToArray(array, value) : value;
+                return nested;
+            }
+
 			$container.on('update_item', function(event, data) {
 				// Find item by id
-				$item = $renderer.find('li[data-item-id="'+data.mitem_id+'"]')
+				$item = $renderer.find('li[data-item-id="'+data.mitem_id+'"]');
 				delete data.mitem_id;
 				// Set values
                 set_item_values($item, data);
@@ -215,15 +246,14 @@ require(
 	padding: 1em 0;
 }
 .renderer-kiwi-menu .add-buttons {
-	margin: 0 0 1em 0;
+	margin: 0 0 1.5em 0;
 }
 
-.renderer-kiwi-menu .add-buttons button span.ui-icon {
-	display: inline-block;
-	left: -8px;
-	top: 2px;
-	position: relative;
-	margin-right: -5px;
+.renderer-kiwi-menu .add-buttons button span.icon img {
+    width: 12px;
+    top: 1px;
+    position: relative;
+    left: -3px;
 }
 
 .renderer-kiwi-menu ol {
@@ -268,8 +298,7 @@ require(
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#ededed',GradientType=0 );
 }
 
-.renderer-kiwi-menu li div:before {
-    content: '';
+.renderer-kiwi-menu li .icon {
     display: block;
     position: absolute;
     top: 0;
@@ -278,6 +307,18 @@ require(
     width: 30px;
     border-right: 1px solid #D4D4D4;
     box-shadow: 1px 0 0px rgba(255,255,255,0.5);
+	opacity: 0.8;
+}
+
+.renderer-kiwi-menu li .icon img {
+	width: 16px;
+	height: 16px;
+    margin-top: -8px;
+    margin-left: -8px;
+	top: 50%;
+	left: 50%;
+	display: block;
+    position: absolute;
 }
 
 .renderer-kiwi-menu li .edit {

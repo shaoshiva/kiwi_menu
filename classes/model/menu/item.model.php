@@ -83,8 +83,8 @@ class Model_Menu_Item extends \Nos\Orm\Model
 	// define the EAV container like so
 	protected static $_eav = array(
 		'attributes' => array(		// we use the statistics relation to store the EAV data
-			'attribute' => 'key',	// the key column in the related table contains the attribute
-			'value' 	=> 'value',		// the value column in the related table contains the value
+			'attribute' => 'miat_key',	// the key column in the related table contains the attribute
+			'value' 	=> 'miat_value',		// the value column in the related table contains the value
 		)
 	);
 
@@ -163,33 +163,42 @@ class Model_Menu_Item extends \Nos\Orm\Model
 	public function populate($data = null) {
 		// Populate with POST/GET if $data is empty
 		$data = (!empty($data) ? (array) $data : \Input::param());
+		// Populate driver first
+		uksort($data, function($a, $b) {
+			if ($a == 'mitem_driver') return -1;
+			if ($b == 'mitem_driver') return 1;
+			return 0;
+		});
+		// Parse data
 		foreach ($data as $property => $value) {
-			// Eav attributes
-			if ($property == 'attributes') {
-				foreach ($value as $key => $val) {
-					if (in_array($key, $this->attributes())) {
-						$this->$key = $val;
-//						$this->attributes[] = Model_Menu_Item_Attribute::forge(array(
-//							'miat_mitem_id' => $this->mitem_id,
-//							'miat_key' => $this->mitem_id,
-//							'miat_value' => $this->mitem_id,
-//						));
-					}
-				}
-			}
-
 			// Property
-			elseif (array_key_exists($property, $this->properties())) {
+			if (array_key_exists($property, $this->properties())) {
 				$this->$property = $value;
 			}
-
-			// Related (wysiwyg or media)
+			// Wysiwyg or media
+			elseif (in_array($property, array('wysiwygs', 'medias'))) {
+				foreach ($value as $name => $val) {
+					$this->$property->$name = $val;
+				}
+			}
+			//
+			// Attribute
+			elseif ($property == 'attributes') {
+				$this->setAttribute($property, $value);
+			}
+			// Dot notation
 			elseif (strpos($property, '.')) {
 				$parts = explode('.', $property);
 				if (count($parts) == 2) {
 					list($key, $name) = $parts;
+					// Wysiwyg or media
 					if (in_array($key, array('wysiwygs', 'medias'))) {
+//						dd($value);
 						$this->$key->$name = $value;
+					}
+					// Attribute
+					if ($key == 'attributes') {
+						$this->setAttribute($name, $value);
 					}
 				}
 			}
@@ -197,6 +206,30 @@ class Model_Menu_Item extends \Nos\Orm\Model
 		return $this;
 	}
 
+	/**
+	 * Set an attribute (checks if authorized)
+	 *
+	 * @param $key
+	 * @param $value
+	 * @return bool|\Orm\Model
+	 */
+	public function setAttribute($key, $value) {
+		if (!in_array($key, $this->attributes())) {
+			// Attribute not authorized
+			return false;
+		}
+		foreach ($this->attributes as $attribute) {
+			if ($attribute->miat_key == $key) {
+				$attribute->miat_value = $value;
+				return $attribute;
+			}
+		}
+		return $this->attributes[] = Model_Menu_Item_Attribute::forge(array(
+			'miat_mitem_id'	=> $this->mitem_id,
+			'miat_key'		=> $key,
+			'miat_value'	=> $value,
+		));
+	}
 
 	/**
 	 * Find with order_by default sort

@@ -30,7 +30,7 @@ Nos\I18n::current_dictionary(array('kiwi_menu::common', 'nos::common'));
 					// Form cancel
 					$form.find('[data-id="close"]').on('click', function(e) {
 						e.preventDefault();
-                        $form.nosDialog('close');u
+                        $form.nosDialog('close');
 					});
 
 					// Form submit
@@ -39,7 +39,7 @@ Nos\I18n::current_dictionary(array('kiwi_menu::common', 'nos::common'));
 
 						// Get form data (only modified values)
 						var data = {
-                            mitem_id	: <?= $item->mitem_id?>,
+							mitem_id	: <?= \Format::forge($item_id)->to_json() ?>,
 							mitem_driver: <?= \Format::forge($item->mitem_driver)->to_json() ?>
 						};
 						$.each($form.serializeArray(), function(key, element) {
@@ -65,11 +65,6 @@ Nos\I18n::current_dictionary(array('kiwi_menu::common', 'nos::common'));
                         $form.nosDialog('close');
 						return false;
 					});
-//                    $form.find('[type="submit"]').on('click', function() {
-//                        e.preventDefault();
-//                        $form.trigger('submit');
-//                        return false;
-//                    });
                 });
             }
     );

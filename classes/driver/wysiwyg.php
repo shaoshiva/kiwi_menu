@@ -13,6 +13,32 @@ namespace Kiwi\Menu;
 class Driver_Wysiwyg extends Driver {
 
 	/**
+	 * Builds and returns the item edition form
+	 *
+	 * @param string $content
+	 * @return string
+	 */
+	public function form($content = null) {
+		// Prepare renderer if new item
+		return parent::form(\View::forge('kiwi_menu::driver/wysiwyg/form', array(
+			'item'				=> $this->item,
+			'content'			=> $content,
+			'expander_options'	=> array(
+				'allowExpand'		=> true,
+				'expanded'			=> true,
+			),
+			'renderer'			=> array(
+				'style' 			=> 'width: 100%; height: 280px;',
+				'name'				=> 'wysiwygs.content',
+				'value'				=> \Nos\Tools_Wysiwyg::prepare_renderer($this->item->wysiwygs->content),
+				'renderer_options' 	=> \Nos\Tools_Wysiwyg::jsOptions(array(
+					'mode' 				=> 'exact',
+				), $this->item, false),
+			),
+		), false)->render());
+	}
+
+	/**
 	 * Displays the item
 	 *
 	 * @return string|bool
@@ -22,30 +48,5 @@ class Driver_Wysiwyg extends Driver {
 			return false;
 		}
 		return $this->item->wysiwygs->content->wysiwyg_text;
-	}
-
-	/**
-	 * Builds and returns the item edition form
-	 *
-	 * @param string $content
-	 * @return string
-	 */
-	public function form($content = null) {
-		return parent::form(\View::forge('kiwi_menu::driver/wysiwyg/form', array(
-			'item'				=> $this->item,
-			'content'			=> $content,
-			'expander_options'	=> array(
-				'allowExpand'		=> true,
-				'expanded'			=> true,
-			),
-			'renderer'			=> array(
-				'style' 			=> 'width: 100%; height: 180px;',
-				'name'				=> 'wysiwygs.content',
-				'value'				=> $this->item->wysiwygs->content,
-				'renderer_options' 	=> \Nos\Tools_Wysiwyg::jsOptions(array(
-					'mode' 				=> 'exact',
-				), $this->item, false),
-			),
-		), false)->render());
 	}
 }

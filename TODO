@@ -1,0 +1,5 @@
+Back: delete a menu item
+Back: create the template renderer
+Back: add template support on menu
+Front: create an enhancer to display a menu using the template
+Front: see how to display a menu in a view (enhancer HMVC call?)

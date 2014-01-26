@@ -34,15 +34,6 @@ class Driver {
 		return $this;
 	}
 
-	/**u
-	 * Displays the item
-	 *
-	 * @return string|bool
-	 */
-	public function display() {
-		return $this->item->title();
-	}
-
 	/**
 	 * Builds the item's edit form
 	 *
@@ -58,6 +49,15 @@ class Driver {
 				'expanded'			=> true,
 			),
 		), false)->render();
+	}
+
+	/**u
+	 * Displays the item
+	 *
+	 * @return string|bool
+	 */
+	public function display() {
+		return $this->item->title();
 	}
 
 	/**

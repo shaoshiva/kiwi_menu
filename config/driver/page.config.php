@@ -9,9 +9,9 @@
  */
 
 return array(
-	'name'	=> 'Text',
-	'icon'	=> 'static/apps/kiwi_menu/img/driver/text/icon.png',
+	'name'	=> 'Page',
+	'icon'	=> 'static/apps/kiwi_menu/img/driver/page/icon.png',
 	'form'	=> array(
-		'height'	=> 480,
+		'height'	=> 560,
 	),
 );

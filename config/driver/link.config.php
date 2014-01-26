@@ -10,7 +10,12 @@
 
 return array(
 	'name'	=> 'Link',
+	'icon'	=> 'static/apps/kiwi_menu/img/driver/link/icon.png',
 	'form'	=> array(
-		'height'	=> 400,
+		'height'	=> 450,
+	),
+	// Allowed EAV attributes
+	'attributes'	=> array(
+		'url', 'url_blank'
 	),
 );

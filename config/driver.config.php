@@ -9,8 +9,10 @@
  */
 
 return array(
-	// Icon url or class name (eg. jquery UI icons or Wijmo button icons)
-	'icon'			=> '',
+	// Icon
+	'icon'			=> array(
+		'16' 			=> ''
+	),
 
 	// Allowed EAV attributes
 	'attributes'	=> array(),

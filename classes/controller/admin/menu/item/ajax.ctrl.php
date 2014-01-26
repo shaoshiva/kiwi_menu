@@ -49,6 +49,7 @@ class Controller_Admin_Menu_Item_Ajax extends \Nos\Controller_Admin_Application 
 				'controller_url'	=> 'admin/kiwi_menu/menu/item/ajax/',
 				'menu_form_id'		=> \Input::get('form_id'),
 				'item'				=> $item,
+				'item_id'			=> $id,
 				'expander_options'	=> array(
 					'allowExpand'		=> false,
 					'expanded'			=> true,
