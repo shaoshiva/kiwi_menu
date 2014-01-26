@@ -1,8 +1,8 @@
 # Introduction
 
-Kiwi Menu is a menu manager for Novius OS. It spports nested menus with different kind of items (text, link, page, wysiwyg...). You can easily develop your own kind of item it the default ones do not fit your needs (see the Driver section in the documentation).
+Kiwi Menu is a menu manager for Novius OS. It supports nested menus with different kind of items (text, link, page, wysiwyg...). You can easily develop your own kind of item if the default ones do not fit your needs (see the Driver section in the documentation).
 
-[STILL IN DEVELOPMENT ] Display your menus anywhere using the enhancer and choose how they looks like using the templates (horizontal, vertical, etc...). You can develop your own templates (see the Template section in the documentation).
+[STILL IN DEVELOPMENT ] Display your menus anywhere using the enhancer and choose how they looks like using the template system (horizontal, vertical, etc...). You can develop your own templates (see the Template section in the documentation).
 
 # Requirements
 
@@ -53,7 +53,7 @@ class Driver_Example extends Driver {
     public function display();
 
     /**
-     * Builds and returns the item edition form
+     * Builds the item's edition form
      */
     public function form();
 }
@@ -68,9 +68,9 @@ Available drivers are set in the configuration file `kiwi_menu/config/config.php
 * Available drivers
 */
 'drivers' => array(
-		'Kiwi\Menu\Driver_Text',
-		'Kiwi\Menu\Driver_Link',
-		'Kiwi\Menu\Driver_Wysiwyg',
+	'Kiwi\Menu\Driver_Text',
+	'Kiwi\Menu\Driver_Link',
+	'Kiwi\Menu\Driver_Wysiwyg',
 ),
 ```
 
