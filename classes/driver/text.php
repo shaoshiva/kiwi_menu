@@ -28,4 +28,20 @@ class Driver_Text extends Driver {
 			),
 		), false)->render());
 	}
+
+	/**
+	 * Displays the item
+	 *
+	 * @return string|bool
+	 */
+	public function display() {
+		$text = null;
+		if (!empty($this->item->text)) {
+			$text = $this->item->text;
+			if (empty($this->item->is_html)) {
+				$text = e($text);
+			}
+		}
+		return '<span class="text">'.$text.'</span>';
+	}
 }

@@ -56,28 +56,94 @@ require(
 			 * @param $item
 			 */
 			function init_item($item) {
-				// Adds the edit button
-				if (!$item.find('> div a.edit').length) {
-					$item.find('> div').append('<a href="#" class="edit"><span class="ui-icon ui-icon-pencil"></span></a>');
-				}
+				// Add the button wrapper
+                if (!$item.find('> div span.buttons').length) {
+                	$item.find('> div').append('<span class="buttons"></span>');
+                }
+                // Add the delete button
+                if (!$item.find('> div a.delete').length) {
+					$('<a href="#" class="item-button delete"><span class="ui-icon ui-icon-trash"></span></a>')
+						.on('click', function(e) {
+							e.preventDefault();
+							var $item = $(this).closest('li');
+							var item_id = $item.data('item-id');
+							$item.hide();
+							// Set hidden input
+							$('<input type="hidden" />').attr({
+								name	: 'delete_items['+item_id+']'
+							}).val(1).appendTo($container);
+						})
+						.appendTo($item.find('> div .buttons'));
+                }
+                // Add the edit button
+                if (!$item.find('> div a.edit').length) {
+                    $('<a href="#" class="item-button edit"><span class="ui-icon ui-icon-pencil"></span></a>')
+                            .on('click', function(e) {
+                                e.preventDefault();
+                                var $item = $(this).closest('li');
+                                var item_driver = $item.data('item-driver');
+                                var item_id = $item.data('item-id');
+
+                                // Search the driver to get the dialog options
+                                var dialog_options = {};
+                                $add_buttons.find('button').each(function() {
+                                    var $this = $(this);
+                                    if ($this.data('item-driver') == item_driver) {
+                                        dialog_options = $this.data('dialog-options') || {};
+                                    }
+                                });
+
+                                // Build ajax data
+                                var ajaxData = {
+                                    form_id			: $container.attr('id'),
+                                    mitem_driver 	: item_driver,
+                                    mitem_title		: $item.find('> div .label').text().trim()
+                                };
+                                // Get updated data
+                                $container.find('[name^="update_items['+item_id+']"]').each(function() {
+                                    var $this = $(this);
+                                    var name = $this.attr('name');
+                                    var key = name.substring(name.lastIndexOf('[') + 1, name.length - 1);
+                                    var parts = key.split('.');
+                                    if (parts.length) {
+                                        // Convert dot notation to array (elsewhere fuel php will break it)
+                                        var arr = dotToArray(parts, $this.val());
+                                        $.extend(ajaxData, arr);
+                                    } else {
+                                        ajaxData[key] = $this.val();
+                                    }
+                                });
+
+                                $(this).nosDialog($.extend({
+                                    contentUrl: 'admin/kiwi_menu/menu/item/ajax/edit/'+item_id,
+                                    ajax : true,
+                                    ajaxData: ajaxData,
+                                    title: <?= \Format::forge(__('Edit an item'))->to_json() ?>,
+                                    height: 400,
+                                    width: 700
+                                }, dialog_options));
+                            })
+                            .appendTo($item.find('> div .buttons'));
+                }
 				// Set the original parent id
 				$item.data('parent-id', get_item_parent_id($item));
 			}
 
 			/**
-			 * Set item properties
+			 * Set item values
 			 *
 			 * @param $item
-			 * @param properties
+			 * @param values
 			 */
-			function set_item_values($item, properties) {
+			function set_item_values($item, values) {
 				var item_id = $item.data('item-id');
 				var is_new = $item.data('is-new');
 
-				$.each(properties, function(property, value) {
+				var modified = 0;
+				$.each(values, function(property, value) {
 
 					// Get the hidden field
-					var input_name = 'items_updates['+item_id+']['+property+']';
+					var input_name = 'update_items['+item_id+']['+property+']';
 					var $input = $container.find('input[name="'+input_name+'"]');
 
 					// Don't create a hidden field if the value is the same as the original
@@ -87,12 +153,43 @@ require(
 					}
 
 					if ($input.length) {
-						$input.val(value);
+						// Update
+						if ($input.val() != value) {
+                            $input.val(value);
+							modified++;
+						}
 					} else {
+						// Create
 						$container.append($('<input type="hidden">').attr('name', input_name).val(value));
+						modified++;
 					}
 				});
+
+                if (modified) {
+                    // Set the unsaved work flag
+                    $renderer.trigger('modified', true);
+				}
+
+				return modified;
 			}
+
+            /**
+             * Update items sort values
+			 *
+			 * @return {Number}
+             */
+            function update_items_sort() {
+                // Updates items parent id and sort
+				var modified = 0;
+                $renderer.find('li').each(function() {
+                    var $item = $(this);
+                    modified += set_item_values($item, {
+                        mitem_parent_id	: get_item_parent_id($item),
+                        mitem_sort		: $item.index()
+                    }, true);
+                });
+				return modified;
+            }
 
 			/**
 			 * Returns the parent id of the $item element
@@ -104,6 +201,7 @@ require(
 				var $parent = $item.parent('ol:not(.renderer)').parent('li');
 				return $parent.length ? $parent.data('item-id') : '';
 			}
+
 
 			// UI fix
 			var $td = $container.closest('td');
@@ -117,16 +215,19 @@ require(
 				items			: 'li',
 				toleranceElement: '> div',
 				stop			: function() {
-					// Updates items parent id and sort
-					$renderer.find('li').each(function() {
-						var $item = $(this);
-						set_item_values($item, {
-							mitem_parent_id	: get_item_parent_id($item),
-							mitem_sort		: $item.index()
-						}, true);
-					});
+					update_items_sort();
 				}
 			});
+
+			// Work in progress
+            $renderer.on('modified', function(e, modified) {
+				console.log(modified);
+				if (modified) {
+                    $container.addClass('work-in-progress');
+				} else {
+                    $container.removeClass('work-in-progress');
+				}
+            });
 
 			// Init items
 			$renderer.find('li').each(function() {
@@ -152,7 +253,7 @@ require(
 
 				// Generates a temporary id
 				var id = 'new_'+(++temp_id_offset);
-				$item.addClass('list_'+id).data('item-id', id);
+				$item.attr('id', 'list_'+id).attr('data-item-id', id).data('item-id', id);
 
 				// Add to the DOM
 				$renderer.append($item);
@@ -166,69 +267,68 @@ require(
 				// Init item
 				init_item($item);
 
-				return false;
-			});
+                // Set unsaved
+				var $item_container = $item.find('> div');
+				if (!$item_container.find('.buttons .unsaved').length) {
+					$item_container.find('.buttons').append('<span class="unsaved"><span class="ui-icon ui-icon-disk"></span></span>');
+				}
 
-			// Edit item
-			$container.on('click', 'a.edit', function(e) {
-				e.preventDefault();
-				var $item = $(this).closest('li');
-				var item_driver = $item.data('item-driver');
-				var item_id = $item.data('item-id');
-
-				// Search the driver to get the dialog options
-				var dialog_options = {};
-				$add_buttons.find('button').each(function() {
-					var $this = $(this);
-					if ($this.data('item-driver') == item_driver) {
-						dialog_options = $this.data('dialog-options') || {};
+                // Listen on insert event to update the item's id
+                $container.closest('.nos-ostabs-panel').nosListenEvent([{
+                    name: 'Kiwi\\Menu\\Model_Menu_Item',
+                    action: ['insert'],
+                    id: id
+                }], function(nosEvent) {
+					console.log('nosEvent insert', nosEvent);
+					if (nosEvent.newid) {
+						$renderer.find('li[data-item-id="'+nosEvent.id+'"]')
+                                .attr('data-item-id', nosEvent.newid)
+                                .data('item-id', nosEvent.newid);
 					}
                 });
 
-				// Build ajax data
-				var ajaxData = {
-                    form_id			: $container.attr('id'),
-                    mitem_driver 	: item_driver,
-                    mitem_title		: $item.find('> div .label').text().trim()
-                };
-				// Get updated data
-				$container.find('[name^="items_updates['+item_id+']"]').each(function() {
-					var $this = $(this);
-					var name = $this.attr('name');
-                    var key = name.substring(name.lastIndexOf('[') + 1, name.length - 1);
-                    var parts = key.split('.');
-					if (parts.length) {
-						// Convert dot notation to array (elsewhere fuel php will break it)
-						var arr = dotToArray(parts, $this.val());
-						$.extend(ajaxData, arr);
-                    } else {
-						ajaxData[key] = $this.val();
-					}
-				});
+				// Update sort
+                update_items_sort();
 
-				$(this).nosDialog($.extend({
-					contentUrl: 'admin/kiwi_menu/menu/item/ajax/edit/'+item_id,
-					ajax : true,
-                    ajaxData: ajaxData,
-					title: <?= \Format::forge(__('Edit an item'))->to_json() ?>,
-					height: 400,
-					width: 700
-				}, dialog_options));
+				return false;
+			});
+
+            $container.nosListenEvent([{
+				name: 'Kiwi\\Menu\\Model_Menu_Item',
+				action: ['delete']
+			}], function(nosEvent) {
+                console.log('nosEvent delete', nosEvent);
+				// @todo Delete items on delete event listen
             });
 
-            function dotToArray(array, value) {
-                var key = array.shift();
-                var nested = {};
-                nested[key] = array.length ? dotToArray(array, value) : value;
-                return nested;
-            }
 
+        	// Event triggered with the item's modified data when the popup is closed
 			$container.on('update_item', function(event, data) {
+                var id = data.mitem_id;
+                delete data.mitem_id;
+
 				// Find item by id
-				$item = $renderer.find('li[data-item-id="'+data.mitem_id+'"]');
-				delete data.mitem_id;
+				var $item = $renderer.find('li[data-item-id="'+id+'"]');
+
+                console.log('item-id', $item);
+
 				// Set values
-                set_item_values($item, data);
+                var modified = set_item_values($item, data);
+				
+				// Set unsaved if modified
+				if (modified) {
+					var $item_container = $renderer.find('li[data-item-id="'+nosEvent.id+'"] > div');
+                    $item_container.find('.buttons .unsaved').remove();
+                    $item_container.find('.buttons').append('<span class="unsaved"><span class="icon  ui-icon-disk"></span></span>');
+                }
+
+                // Listen on update event
+//                $container.closest('.nos-ostabs-panel').nosListenEvent([{
+//                    name: 'Kiwi\\Menu\\Model_Menu_Item',
+//                    action: ['update'],
+//                    id: id
+//                }], function(nosEvent) {
+//                });
 
 				// Updates the title
 				if (typeof data.mitem_title != 'undefined') {
@@ -237,7 +337,51 @@ require(
 
 				return true;
 			});
+
+            // Listen on insert/update events to remove hidden inputs
+            $container.closest('.nos-ostabs-panel')
+				.nosListenEvent([{
+					name: 'Kiwi\\Menu\\Model_Menu_Item',
+					action: ['insert', 'update']
+				}], function(nosEvent) {
+					if (nosEvent.id) {
+						// Remove hidden inputs
+						$container.find('[name^="update_items['+nosEvent.id+']"]').remove();
+						// Remove unsaved
+                        $renderer.find('li[data-item-id="'+nosEvent.id+'"] > div .buttons .unsaved').remove();
+					}
+				})
+				// Listen on delete events to remove hidden inputs
+				.nosListenEvent([{
+					name: 'Kiwi\\Menu\\Model_Menu_Item',
+					action: ['delete']
+				}], function(nosEvent) {
+					if (nosEvent.id) {
+						// Remove hidden inputs
+						$container.find('[name^="delete_items['+nosEvent.id+']"]').remove();
+					}
+				})
+				// Listen on all events to set the work in progress state
+				.nosListenEvent([{
+					name	: 'Kiwi\\Menu\\Model_Menu',
+					action	: ['insert', 'update'],
+					id 		: <?= \Format::forge($menu->menu_id)->to_json() ?>
+				}], function(nosEvent) {
+					// Reset work in progress state if nothing to save
+					if (!$container.find('[name^="delete_item"]').length
+							&& !$container.find('[name^="update_item"]').length) {
+						$renderer.trigger('modified', false);
+					}
+				})
+			;
 		});
+
+		function dotToArray(array, value) {
+			var key = array.shift();
+			var nested = {};
+			nested[key] = array.length ? dotToArray(array, value) : value;
+			return nested;
+		}
 	}
 );
 </script>
@@ -321,23 +465,44 @@ require(
     position: absolute;
 }
 
-.renderer-kiwi-menu li .edit {
+.renderer-kiwi-menu li .item-button {
     display: block;
     position: absolute;
     top: 0;
-    right: 0;
     bottom: 0;
     width: 30px;
-	background: rgba(0,0,0,0.1);
+    background: rgba(0,0,0,0.1);
     border-left: 1px solid #cecece;
     cursor: pointer;
 }
 
-.renderer-kiwi-menu li .edit:hover {
+.renderer-kiwi-menu li .unsaved {
+    display: block;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 30px;
+    right: 62px;
+}
+
+.renderer-kiwi-menu li .edit {
+    right: 31px;
+}
+
+.renderer-kiwi-menu li .delete {
+    right: 0;
+}
+
+.renderer-kiwi-menu li .item-button:hover {
     background: rgba(0,0,0,0.2);
 }
 
-.renderer-kiwi-menu li .edit span {
+.renderer-kiwi-menu li .delete:hover {
+    background: rgba(160,0,0,0.3);
+}
+
+
+.renderer-kiwi-menu li .item-button span {
 	margin: 7px auto;
 	display: block;
 }

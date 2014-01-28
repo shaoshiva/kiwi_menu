@@ -96,6 +96,13 @@ class Model_Menu_Item extends \Nos\Orm\Model
 			'cascade_save'   => false,
 			'cascade_delete' => false,
 		),
+		'menu' => array(
+			'key_from'       => 'mitem_menu_id',
+			'model_to'       => '\Kiwi\Menu\Model_Menu',
+			'key_to'         => 'menu_id',
+			'cascade_save'   => false,
+			'cascade_delete' => false,
+		),
     );
 
     protected static $_has_many  = array(
@@ -148,7 +155,9 @@ class Model_Menu_Item extends \Nos\Orm\Model
 	}
 
 	/**
-	 * Return the EAV attributes
+	 * Return the EAV attribute keys
+	 *
+	 * @return mixed
 	 */
 	public function attributes() {
 		return $this->driver()->attributes();
@@ -193,7 +202,6 @@ class Model_Menu_Item extends \Nos\Orm\Model
 					list($key, $name) = $parts;
 					// Wysiwyg or media
 					if (in_array($key, array('wysiwygs', 'medias'))) {
-//						dd($value);
 						$this->$key->$name = $value;
 					}
 					// Attribute
@@ -212,6 +220,7 @@ class Model_Menu_Item extends \Nos\Orm\Model
 	 * @param $key
 	 * @param $value
 	 * @return bool|\Orm\Model
+	 * @throws \Exception
 	 */
 	public function setAttribute($key, $value) {
 		if (!in_array($key, $this->attributes())) {

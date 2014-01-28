@@ -57,7 +57,25 @@ class Driver {
 	 * @return string|bool
 	 */
 	public function display() {
-		return $this->item->title();
+		return $this->title();
+	}
+
+	/**
+	 * Is this menu item active ?
+	 *
+	 * @return bool
+	 */
+	public function active() {
+		return false;
+	}
+
+	/**
+	 * Is this menu item published ?
+	 *
+	 * @return bool
+	 */
+	public function published() {
+		return true; //@todo manage item publish, then $this->item->published();
 	}
 
 	/**

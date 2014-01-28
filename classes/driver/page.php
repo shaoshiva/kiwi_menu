@@ -43,12 +43,45 @@ class Driver_Page extends Driver {
 	/**
 	 * Displays the item
 	 *
-	 * @return string|bool
+	 * @return bool|string
+	 * @throws \Exception
 	 */
 	public function display() {
-		if (empty($this->item)) {
+		if (empty($this->item) || empty($this->item->page_id)) {
 			return false;
 		}
-		return $this->item->wysiwygs->content->wysiwyg_text;
+		// Get the page
+		$page = $this->getPage();
+		if (empty($page)) {
+			return false;
+		}
+		return $page->htmlAnchor();
+	}
+
+	/**
+	 * Are this menu item and the associated page published ?
+	 *
+	 * @return bool
+	 */
+	public function published() {
+		$page = $this->getPage();
+		if (empty($page) || !$page->published()) {
+			return false;
+		}
+		return parent::published();
+	}
+
+	/**
+	 * Get the page
+	 *
+	 * @return bool|\Orm\Model|\Orm\Model[]
+	 * @throws \Exception
+	 */
+	protected function getPage() {
+		$page = \Nos\Page\Model_Page::find($this->item->page_id);
+		if (empty($page)) {
+			return false;
+		}
+		return $page;
 	}
 }

@@ -14,4 +14,8 @@ return array(
 	'form'	=> array(
 		'height'	=> 560,
 	),
+	// Allowed EAV attributes
+	'attributes'	=> array(
+		'page_id', 'page_blank'
+	),
 );

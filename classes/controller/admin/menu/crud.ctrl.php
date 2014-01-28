@@ -27,9 +27,12 @@ class Controller_Admin_Menu_Crud extends \Nos\Controller_Admin_Crud
 		}
 
 		// Save items
-		$response_items = $this->save_items(\Input::post('items_updates'), $menu);
+		$response = \Arr::merge($response, $this->save_items(\Input::post('update_items'), $menu));
 
-		return \Arr::merge($response, $response_items);
+		// Delete items
+		$response = \Arr::merge($response, $this->delete_items(\Input::post('delete_items'), $menu));
+
+		return $response;
 	}
 
 	/**
@@ -70,16 +73,99 @@ class Controller_Admin_Menu_Crud extends \Nos\Controller_Admin_Crud
 				$return['dispatchEvent'][] = array(
 					"name" 		=> "Kiwi\\Menu\\Model_Menu_Item",
 					"action" 	=> ($is_new ? 'insert' : 'update'),
-					"id" 		=> $item->mitem_id,
+					"id" 		=> $id,
+					"newid"		=> $item->mitem_id
 				);
 			}
 
-			// Errors on item
+				// Errors on item
 			catch (\Exception $e) {
 				$return['errors'][] = $e->getMessage();
 			}
 		}
 
 		return $return;
+	}
+
+	/**
+	 * Save menu items
+	 *
+	 * @param $items
+	 * @param $menu
+	 * @return array
+	 * @throws \Exception
+	 */
+	public function delete_items($items, $menu) {
+		$return = array();
+
+		if (empty($items)) {
+			return $return;
+		}
+
+		foreach ($items as $id => $value) {
+
+			try {
+				// New item or existing one ?
+				if (empty($id) || !is_numeric($id)) {
+					continue;
+				}
+
+				// Get or create the item
+				$item = Model_Menu_Item::find($id);
+				if (empty($item)) {
+					// Item not found
+					throw new \Exception(__('Sorry, can\'t find this item. Perhaps it has already been deleted?'));
+				}
+
+				// Delete item's children
+				$children_tree = $menu->tree($item->mitem_id);
+				$deleted_ids = $this->delete_item_children($children_tree);
+
+				// Delete item
+				$item->delete();
+				$deleted_ids += array($id);
+
+				// Dispatch delete events
+				foreach ($deleted_ids as $deleted_id) {
+					$return['dispatchEvent'][] = array(
+						"name" 		=> "Kiwi\\Menu\\Model_Menu_Item",
+						"action" 	=> 'delete',
+						"id" 		=> $deleted_id,
+					);
+				}
+			}
+
+				// Errors on item
+			catch (\Exception $e) {
+				$return['errors'][] = $e->getMessage();
+			}
+		}
+
+		return $return;
+	}
+
+	public function delete_item($menu, $item) {
+	}
+
+	/**
+	 * Delete item's children
+	 *
+	 * @param array $tree Item's children tree
+	 * @return array Deleted item ids
+	 */
+	public function delete_item_children($tree) {
+		$ids = array();
+		if (empty($tree)) {
+			return $ids;
+		}
+		foreach ($tree as $item) {
+			if (count($item->children)) {
+				// Delete the item's children
+				$ids += $this->delete_item_children($item->children);
+			}
+			// Delete the itemx
+			$item->delete();
+		}
+		return array_keys($tree) + $ids;
 	}
 }

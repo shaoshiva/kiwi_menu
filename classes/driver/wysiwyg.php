@@ -47,6 +47,6 @@ class Driver_Wysiwyg extends Driver {
 		if (empty($this->item)) {
 			return false;
 		}
-		return $this->item->wysiwygs->content->wysiwyg_text;
+		return \Nos\Nos::parse_wysiwyg($this->item->wysiwygs->content);
 	}
 }

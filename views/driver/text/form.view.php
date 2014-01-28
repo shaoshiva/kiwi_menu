@@ -11,8 +11,14 @@
 <div class="expander fieldset" data-wijexpander-options="<?= htmlspecialchars(\Format::forge()->to_json($expander_options)); ?>">
     <h3><?= __('Text') ?></h3>
 	<div style="overflow:visible;">
-		<label for="mitem_attr_text">Text</label>
-		<textarea name="attributes[text]" id="mitem_attr_text" rows="5" style="width: 100%"></textarea>
+		<div class="field">
+		<label for="mitem_attributes_text">Text</label>
+			<textarea name="attributes.text" id="mitem_attributes_text" rows="5" style="width: 100%"></textarea>
+        </div>
+        <div class="field">
+			<input type="checkbox" name="attributes.is_html" value="1" />
+			<?= __('Interpret as HTML code') ?>
+		</div>
 	</div>
 </div>
 <?= $content ?>

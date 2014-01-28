@@ -14,4 +14,8 @@ return array(
 	'form'	=> array(
 		'height'	=> 480,
 	),
+	// Allowed EAV attributes
+	'attributes'	=> array(
+		'text', 'is_html'
+	),
 );

@@ -66,6 +66,16 @@ class Model_Menu extends \Nos\Orm\Model
 	protected $tree	= array();
 
 	/**
+	 * Display the menu
+	 */
+	public function display() {
+		return \View::forge('kiwi_menu::front/template/horizontal', array(
+			'menu'	=> $this,
+			'items'	=> $this->tree()
+		), false);
+	}
+
+	/**
 	 * Returns menu items as a tree
 	 *
 	 * @param null $parent_id

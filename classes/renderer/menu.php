@@ -25,7 +25,7 @@ class Renderer_Menu extends \Nos\Renderer
 		$menu = $this->fieldset()->getInstance();
         return $this->template(static::renderer(array(
             'input_name' => $this->name,
-			'items'	=> $menu->tree()
+			'menu'	=> $menu,
         )));
     }
 
@@ -46,9 +46,12 @@ class Renderer_Menu extends \Nos\Renderer
             'contextChange' => true,
         ), $options);
 
+		// Get the menu
+		$menu = \Arr::get($options, 'menu');
+
 		// Builds the tree
 		$tree = \View::forge('kiwi_menu::admin/renderer/menu/layout-tree', array(
-			'items'			=> \Arr::get($options, 'items'),
+			'items'			=> $menu ? $menu->tree() : array(),
 			'options'		=> $options,
 		), false);
 
@@ -56,6 +59,7 @@ class Renderer_Menu extends \Nos\Renderer
         return \View::forge('kiwi_menu::admin/renderer/menu/layout', array(
 			'id' 			=> uniqid('renderer-menu-'),
 			'options'		=> $options,
+			'menu'			=> $menu,
 			'tree'			=> $tree,
 		), false);
     }

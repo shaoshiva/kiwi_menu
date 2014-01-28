@@ -23,6 +23,7 @@ uasort($items, function($a, $b) {
 				<span class="label">
 					<?= $item->mitem_title ? $item->mitem_title : '<em>'.__('No title').'</em>' ?>
 				</span>
+				<span class="buttons"></span>
 			</div>
 			<?php
 			if (count($item->children)) {

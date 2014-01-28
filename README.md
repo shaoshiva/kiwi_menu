@@ -1,8 +1,6 @@
 # Introduction
 
-Kiwi Menu is a menu manager for Novius OS. It supports nested menus with different kind of items (text, link, page, wysiwyg...). You can easily develop your own kind of item if the default ones do not fit your needs (see the Driver section in the documentation).
-
-[STILL IN DEVELOPMENT ] Display your menus anywhere using the enhancer and choose how they looks like using the template system (horizontal, vertical, etc...). You can develop your own templates (see the Template section in the documentation).
+Kiwi Menu is a menu manager for Novius OS.
 
 # Requirements
 
@@ -14,13 +12,18 @@ The Kiwi Menu application runs on Novius OS Chiba 2 and upper.
 
 # Usage
 
-After you installed this application in your Novius OS, you will be able to create menus using the appdesk and then display them on your website using the enhancer.
+After you installed this application in your Novius OS, you will be able to create menus with an infinite number of sub-menususing through an appdesk and a powerful drag'n drop UI based on the nestedSortable jQuery plugin.
 
 # Documentation
 
 ## Driver
 
 This application uses drivers to build and display the menu's items.
+
+These drivers are natively provided :
+* Driver_Text
+* Driver_Link
+* Driver_Wysiwyg
 
 ### Structure
 
@@ -48,7 +51,7 @@ class Driver_Example extends Driver {
     public function display();
 
     /**
-     * Builds the item's edition form
+     * Builds and returns the item edition form
      */
     public function form();
 }
@@ -58,20 +61,16 @@ class Driver_Example extends Driver {
 
 Available drivers are set in the configuration file `kiwi_menu/config/config.php` :
 
-
 ```php
 /*
 * Available drivers
 */
 'drivers' => array(
-	'Kiwi\Menu\Driver_Text',
-	'Kiwi\Menu\Driver_Link',
-	'Kiwi\Menu\Driver_Page',
-	'Kiwi\Menu\Driver_Wysiwyg',
+		'Kiwi\Menu\Driver_Text',
+		'Kiwi\Menu\Driver_Link',
+		'Kiwi\Menu\Driver_Wysiwyg',
 ),
 ```
-
-**Note**: Drivers listed above are the default ones provided by this application.
 
 ### Create a driver
 
