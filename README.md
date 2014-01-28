@@ -22,11 +22,6 @@ After you installed this application in your Novius OS, you will be able to crea
 
 This application uses drivers to build and display the menu's items.
 
-These drivers are natively provided :
-* Driver_Text
-* Driver_Link
-* Driver_Wysiwyg
-
 ### Structure
 
 A driver is composed of two files :
@@ -63,6 +58,7 @@ class Driver_Example extends Driver {
 
 Available drivers are set in the configuration file `kiwi_menu/config/config.php` :
 
+
 ```php
 /*
 * Available drivers
@@ -70,9 +66,12 @@ Available drivers are set in the configuration file `kiwi_menu/config/config.php
 'drivers' => array(
 	'Kiwi\Menu\Driver_Text',
 	'Kiwi\Menu\Driver_Link',
+	'Kiwi\Menu\Driver_Page',
 	'Kiwi\Menu\Driver_Wysiwyg',
 ),
 ```
+
+**Note**: Drivers listed above are the default ones provided by this application.
 
 ### Create a driver
 
