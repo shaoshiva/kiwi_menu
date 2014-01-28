@@ -14,7 +14,7 @@ The Kiwi Menu application runs on Novius OS Chiba 2 and upper.
 
 # Usage
 
-After you installed this application in your Novius OS, you will be able to create menus with an infinite number of sub-menususing through an appdesk and a powerful drag'n drop UI based on the nestedSortable jQuery plugin.
+After you installed this application in your Novius OS, you will be able to create menus using the appdesk and then display them on your website using the enhancer.
 
 # Documentation
 
