@@ -221,7 +221,6 @@ require(
 
 			// Work in progress
             $renderer.on('modified', function(e, modified) {
-				console.log(modified);
 				if (modified) {
                     $container.addClass('work-in-progress');
 				} else {
@@ -246,14 +245,18 @@ require(
 				// Creates the item
 				var $item = $('<li><div><span class="label">'+$this.data('item-title')+'</span></div></li>')
 						.data('item-driver', item_driver)
-						.data('is-new', true);
+						.data('is-new', true)
+						// Set the modified flag
+                        .addClass('modified');
 
 				// Add icon
 				$item.find('> div').prepend('<span class="icon"><img src="'+$this.find('.icon img').attr('src')+'" /></span>');
 
 				// Generates a temporary id
 				var id = 'new_'+(++temp_id_offset);
-				$item.attr('id', 'list_'+id).attr('data-item-id', id).data('item-id', id);
+				$item.attr('id', 'list_'+id)
+					 .attr('data-item-id', id)
+					 .data('item-id', id);
 
 				// Add to the DOM
 				$renderer.append($item);
@@ -267,11 +270,8 @@ require(
 				// Init item
 				init_item($item);
 
-                // Set unsaved
-				var $item_container = $item.find('> div');
-				if (!$item_container.find('.buttons .unsaved').length) {
-					$item_container.find('.buttons').append('<span class="unsaved"><span class="ui-icon ui-icon-disk"></span></span>');
-				}
+                // Set unsa
+				$item.addClass('modified');
 
                 // Listen on insert event to update the item's id
                 $container.closest('.nos-ostabs-panel').nosListenEvent([{
@@ -279,7 +279,6 @@ require(
                     action: ['insert'],
                     id: id
                 }], function(nosEvent) {
-					console.log('nosEvent insert', nosEvent);
 					if (nosEvent.newid) {
 						$renderer.find('li[data-item-id="'+nosEvent.id+'"]')
                                 .attr('data-item-id', nosEvent.newid)
@@ -317,18 +316,8 @@ require(
 				
 				// Set unsaved if modified
 				if (modified) {
-					var $item_container = $renderer.find('li[data-item-id="'+nosEvent.id+'"] > div');
-                    $item_container.find('.buttons .unsaved').remove();
-                    $item_container.find('.buttons').append('<span class="unsaved"><span class="icon  ui-icon-disk"></span></span>');
+					$item.addClass('modified');
                 }
-
-                // Listen on update event
-//                $container.closest('.nos-ostabs-panel').nosListenEvent([{
-//                    name: 'Kiwi\\Menu\\Model_Menu_Item',
-//                    action: ['update'],
-//                    id: id
-//                }], function(nosEvent) {
-//                });
 
 				// Updates the title
 				if (typeof data.mitem_title != 'undefined') {
@@ -347,8 +336,8 @@ require(
 					if (nosEvent.id) {
 						// Remove hidden inputs
 						$container.find('[name^="update_items['+nosEvent.id+']"]').remove();
-						// Remove unsaved
-                        $renderer.find('li[data-item-id="'+nosEvent.id+'"] > div .buttons .unsaved').remove();
+						// Remove modified flag
+                        $renderer.find('li[data-item-id="'+nosEvent.id+'"]').removeClass('modified');
 					}
 				})
 				// Listen on delete events to remove hidden inputs
@@ -483,6 +472,11 @@ require(
     bottom: 0;
     width: 30px;
     right: 62px;
+}
+
+.renderer-kiwi-menu li.modified .label {
+	font-weight: bold;
+	color: black;
 }
 
 .renderer-kiwi-menu li .edit {

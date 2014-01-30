@@ -25,7 +25,7 @@
 	<?= $content ?>
 	<div class="submit">
 		<?= strtr(__('{{Save}} or <a>Cancel</a>'), array(
-		'{{Save}}' => '<button type="submit" data-icon="check" class="primary">'.__('Save').'</button>',
+		'{{Save}}' => '<button type="submit" data-icon="check" class="primary">'.__('Ok').'</button>',
 		'<a>' => '<a data-id="close" href="#">',
 	)) ?>
 	</div>

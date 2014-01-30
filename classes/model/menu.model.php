@@ -69,7 +69,7 @@ class Model_Menu extends \Nos\Orm\Model
 	 * Display the menu
 	 */
 	public function display() {
-		return \View::forge('kiwi_menu::front/template/horizontal', array(
+		return \View::forge('kiwi_menu::front/template/horizontal/layout', array(
 			'menu'	=> $this,
 			'items'	=> $this->tree()
 		), false);

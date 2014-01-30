@@ -9,7 +9,7 @@
  */
 
 return array(
-    'name'    => 'Kiwi Menu',
+    'name'    => 'Kiwi &#187; Menu',
     'version' => '',
     'provider' => array(
         'name' => 'Pascal VINEY',
@@ -23,7 +23,7 @@ return array(
         16 => '/static/apps/kiwi_menu/img/16/icon.png',
     ),
     'launchers' => array(
-        'Kiwi\Menu::menu' => array(
+        'kiwi_menu' => array(
             'name'    => 'Menu', // displayed name of the launcher
             'action' => array(
                 'action' => 'nosTabs',
