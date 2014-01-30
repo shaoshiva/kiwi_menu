@@ -10,7 +10,7 @@
 
 namespace Kiwi\Menu;
 
-class Driver_Wysiwyg extends Driver {
+class Driver_Item_Wysiwyg extends Driver_Item {
 
 	/**
 	 * Builds and returns the item edition form
@@ -47,6 +47,6 @@ class Driver_Wysiwyg extends Driver {
 		if (empty($this->item)) {
 			return false;
 		}
-		return \Nos\Nos::parse_wysiwyg($this->item->wysiwygs->content);
+		return '<div class="wysiwyg">'.\Nos\Nos::parse_wysiwyg($this->item->wysiwygs->content).'</div>';
 	}
 }

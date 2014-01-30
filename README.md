@@ -22,6 +22,12 @@ After you installed this application in your Novius OS, you will be able to crea
 
 This application uses drivers to build and display the menu's items.
 
+These drivers are natively provided :
+* Driver_Item_Text
+* Driver_Item_Link
+* Driver_Item_Page
+* Driver_Item_Wysiwyg
+
 ### Structure
 
 A driver is composed of two files :
@@ -40,7 +46,7 @@ return array(
 * A class file `kiwi_menu/config/driver/example.config.php` that extends `Driver` and implements at least these methods :
 
 ```php
-class Driver_Example extends Driver {
+class Driver_Item_Example extends Driver_Item {
 
     /**
      * Displays the item
@@ -58,16 +64,15 @@ class Driver_Example extends Driver {
 
 Available drivers are set in the configuration file `kiwi_menu/config/config.php` :
 
-
 ```php
 /*
 * Available drivers
 */
 'drivers' => array(
-	'Kiwi\Menu\Driver_Text',
-	'Kiwi\Menu\Driver_Link',
-	'Kiwi\Menu\Driver_Page',
-	'Kiwi\Menu\Driver_Wysiwyg',
+	'Kiwi\Menu\Driver_Item_Text',
+	'Kiwi\Menu\Driver_Item_Link',
+	'Kiwi\Menu\Driver_Item_Page',
+	'Kiwi\Menu\Driver_Item_Wysiwyg',
 ),
 ```
 
@@ -78,7 +83,7 @@ Available drivers are set in the configuration file `kiwi_menu/config/config.php
 You can create a new driver if the existing ones doesn't fit your needs. You just have to create the class file with the required methods (see the **Structure** section above) :
 
 ```php
-class Driver_Example extends Kiwi\Menu\Driver {
+class Driver_Item_Example extends Kiwi\Menu\Driver {
   ...
 }
 ```
@@ -98,7 +103,7 @@ Then add your driver to the list of available drivers:
 
 ```php
 \Event::register_function('config|kiwi_menu::config', function(&$config) {
-    $config['drivers'][] = 'Demo\Driver_Example';
+    $config['drivers'][] = 'Demo\Driver_Item_Example';
 });
 ```
 

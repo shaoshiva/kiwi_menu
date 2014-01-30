@@ -9,11 +9,17 @@
  */
 
 return array(
-	// Available drivers
-	'drivers'	=> array(
-		'Kiwi\Menu\Driver_Item_Text',
-		'Kiwi\Menu\Driver_Item_Link',
-		'Kiwi\Menu\Driver_Item_Page',
-		'Kiwi\Menu\Driver_Item_Wysiwyg',
+	// Icon
+	'icon'			=> array(
+		'16' 			=> ''
+	),
+
+	// Allowed EAV attributes
+	'attributes'	=> array(),
+
+	// Form options
+	'form'	=> array(
+		'width'  		=> 700,
+		'height' 		=> 400,
 	),
 );

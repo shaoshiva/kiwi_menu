@@ -10,7 +10,7 @@
 
 namespace Kiwi\Menu;
 
-class Driver_Text extends Driver {
+class Driver_Item_Link extends Driver_Item {
 
 	/**
 	 * Builds and returns the item edition form
@@ -19,7 +19,7 @@ class Driver_Text extends Driver {
 	 * @return string
 	 */
 	public function form($content = null) {
-		return parent::form(\View::forge('kiwi_menu::driver/text/form', array(
+		return parent::form(\View::forge('kiwi_menu::driver/link/form', array(
 			'item'				=> $this->item,
 			'content'			=> $content,
 			'expander_options'	=> array(
@@ -35,13 +35,15 @@ class Driver_Text extends Driver {
 	 * @return string|bool
 	 */
 	public function display() {
-		$text = null;
-		if (!empty($this->item->text)) {
-			$text = $this->item->text;
-			if (empty($this->item->is_html)) {
-				$text = e($text);
-			}
+		if (empty($this->item->url)) {
+			return false;
 		}
-		return '<span class="text">'.$text.'</span>';
+        // Blank target
+        $attributes = array();
+        if (!empty($this->item->url_blank)) {
+            $attributes['target'] = '_blank';
+        }
+        // Build anchor with link
+        return \Html::anchor($this->item->url, $this->title(), $attributes);
 	}
 }

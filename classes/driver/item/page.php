@@ -10,7 +10,7 @@
 
 namespace Kiwi\Menu;
 
-class Driver_Page extends Driver {
+class Driver_Item_Page extends Driver_Item {
 
 	/**
 	 * Builds and returns the item edition form
@@ -78,10 +78,9 @@ class Driver_Page extends Driver {
 	 * @throws \Exception
 	 */
 	protected function getPage() {
-		$page = \Nos\Page\Model_Page::find($this->item->page_id);
-		if (empty($page)) {
-			return false;
-		}
-		return $page;
+        if (empty($this->item->page_id)) {
+            return false;
+        }
+		return \Nos\Page\Model_Page::find($this->item->page_id);
 	}
 }

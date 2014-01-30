@@ -10,7 +10,7 @@
 
 namespace Kiwi\Menu;
 
-class Driver {
+class Driver_Item {
 
 	// The menu item
 	protected $item				= null;
@@ -22,7 +22,7 @@ class Driver {
 	 * Constructor
 	 *
 	 * @param null $item
-	 * @return Driver $this
+	 * @return Driver_Item $this
 	 */
 	public function __construct($item = null) {
 		// Set the item
