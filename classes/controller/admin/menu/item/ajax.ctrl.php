@@ -35,10 +35,10 @@ class Controller_Admin_Menu_Item_Ajax extends \Nos\Controller_Admin_Application 
 			$item->populate();
 
 			// Build the driver
-			$driver = Driver::forge($item);
+			$driver = Driver_Item::forge($item);
 
 			// Check if a driver has been found
-			if (get_class($driver) == 'Kiwi\Menu\Driver' && $item->mitem_driver) {
+			if (get_class($driver) == 'Kiwi\Menu\Driver_Item' && $item->mitem_driver) {
 				// Not a known driver
 				throw new \Exception(__('This kind of item is not or no more supported.'));
 				// Note: this error may occur after you uninstall an extension of this application that added this feature.

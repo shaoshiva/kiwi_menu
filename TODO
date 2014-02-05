@@ -1,4 +1,5 @@
-Back: create the template renderer
-Back: add template support on menu
-Front: create an enhancer to display a menu using the template
-Front: see how to display a menu in a view (enhancer HMVC call?)
+Create the item's form with a CRUD config instead of a view (back)
+Create an enhancer to display a menu using the template (front)
+Create the driver menu
+Replace popup with an expander on side like novius_slideshow (back)
+Implements item typing (link, text, html...)

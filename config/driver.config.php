@@ -13,4 +13,13 @@ return array(
 	'icon'			=> array(
 		'16' 			=> ''
 	),
+
+	// Allowed EAV attributes
+	'attributes'	=> array(),
+
+	// Form options
+	'form'	=> array(
+		'width'  		=> 700,
+		'height' 		=> 400,
+	),
 );

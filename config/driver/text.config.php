@@ -9,8 +9,13 @@
  */
 
 return array(
-	// Icon
-	'icon'			=> array(
-		'16' 			=> ''
+	'name'	=> 'Text',
+	'icon'	=> 'static/apps/kiwi_menu/img/driver/text/icon.png',
+	'form'	=> array(
+		'height'	=> 480,
+	),
+	// Allowed EAV attributes
+	'attributes'	=> array(
+		'text', 'is_html'
 	),
 );

@@ -9,8 +9,10 @@
  */
 
 return array(
-	// Icon
-	'icon'			=> array(
-		'16' 			=> ''
+	'name'	=> 'Wysiwyg',
+	'icon'	=> 'static/apps/kiwi_menu/img/driver/wysiwyg/icon.png',
+	'form'	=> array(
+		'width'		=> 900,
+		'height' 	=> 650,
 	),
 );

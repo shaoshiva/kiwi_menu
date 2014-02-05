@@ -13,10 +13,12 @@ namespace Kiwi\Menu;
 class Driver_Item {
 
 	// The menu item
-	protected $item				= null;
+	public $item				= null;
 
 	// Configuration
 	protected $config			= null;
+
+	protected $children			= null;
 
 	/**
 	 * Constructor
@@ -25,6 +27,11 @@ class Driver_Item {
 	 * @return Driver_Item $this
 	 */
 	public function __construct($item = null) {
+        // Search the menu if $menu is an ID
+        if (is_numeric($item)) {
+            $item = Model_Menu_Item::find($item);
+        }
+
 		// Set the item
 		$this->item = $item;
 
@@ -33,6 +40,27 @@ class Driver_Item {
 
 		return $this;
 	}
+
+    /**
+     * Returns item's children forged with their driver
+     *
+     * @return array
+     */
+    public function children() {
+		if (is_null($this->children)) {
+
+			// Gets item children
+			$this->children = $this->item->children();
+
+			// Forge items driver
+			foreach ($this->children as $k => $item) {
+				// Forge driver with item
+				$this->children[$k] = Driver_Item::forge($item);
+			}
+		}
+
+		return $this->children;
+    }
 
 	/**
 	 * Builds the item's edit form
@@ -58,24 +86,6 @@ class Driver_Item {
 	 */
 	public function display() {
 		return $this->title();
-	}
-
-	/**
-	 * Is this menu item active ?
-	 *
-	 * @return bool
-	 */
-	public function active() {
-		return false;
-	}
-
-	/**
-	 * Is this menu item published ?
-	 *
-	 * @return bool
-	 */
-	public function published() {
-		return true; //@todo manage item publish, then $this->item->published();
 	}
 
 	/**
@@ -115,6 +125,24 @@ class Driver_Item {
 		return null;
 	}
 
+    /**
+     * Is this menu item active ?
+     *
+     * @return bool
+     */
+    public function active() {
+        return false;
+    }
+
+    /**
+     * Is this menu item published ?
+     *
+     * @return bool
+     */
+    public function published() {
+        return true; //@todo manage item publish, then $this->item->published();
+    }
+
 	/**
 	 * Loads and returns the config
 	 *
@@ -122,7 +150,7 @@ class Driver_Item {
 	 */
 	public function loadConfig() {
 		if (is_null($this->config)) {
-			$this->config = static::config();
+			$this->config = static::getConfig();
 		}
 		return $this->config;
 	}
@@ -132,7 +160,7 @@ class Driver_Item {
 	 *
 	 * @return array
 	 */
-	public static function config() {
+	public static function getConfig() {
 		// Get current driver configuration
 		list($application_name, $config_file) = \Config::configFile(get_called_class());
 		$config = \Config::loadConfiguration($application_name, $config_file);

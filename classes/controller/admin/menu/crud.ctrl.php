@@ -118,8 +118,7 @@ class Controller_Admin_Menu_Crud extends \Nos\Controller_Admin_Crud
 				}
 
 				// Delete item's children
-				$children_tree = $menu->tree($item->mitem_id);
-				$deleted_ids = $this->delete_item_children($children_tree);
+				$deleted_ids = $this->delete_item_children($menu->items($item->mitem_id));
 
 				// Delete item
 				$item->delete();

@@ -50,4 +50,11 @@ return array(
         ),
         */
     ),
+    // Menus configuration sample
+    'menus' => array(
+        'kiwi_menu' => array(
+            'name'      => __('Kiwi Menu'),
+            'driver'    => 'Kiwi\Menu\Driver_Menu',
+        ),
+    ),
 );

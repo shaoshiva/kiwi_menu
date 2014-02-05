@@ -18,7 +18,7 @@
 			if (!class_exists($driver_class)) {
 				continue;
 			}
-			$driver_config = $driver_class::config();
+			$driver_config = $driver_class::getConfig();
 			$driver_name = \Arr::get($driver_config, 'name');
 			// Dialog options
 			$dialog_options = array(

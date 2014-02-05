@@ -141,6 +141,8 @@ class Model_Menu_Item extends \Nos\Orm\Model
 
 	protected $driver	= null;
 
+	public $children 	= null;
+
 	/**
 	 * Returns the driver
 	 *
@@ -149,18 +151,40 @@ class Model_Menu_Item extends \Nos\Orm\Model
 	 */
 	public function driver($cache = true) {
 		if (is_null($this->driver) || !$cache) {
-			$this->driver = Driver::forge($this);
+			$this->driver = Driver_Item::forge($this);
 		}
 		return $this->driver;
 	}
 
 	/**
-	 * Return the EAV attribute keys
+	 * Returns the EAV attribute keys
 	 *
 	 * @return mixed
 	 */
 	public function attributes() {
 		return $this->driver()->attributes();
+	}
+
+	/**
+	 * Returns item's children
+	 *
+	 * @return mixed
+	 */
+	public function children() {
+		// Loads from DB if not already loaded
+		if (is_null($this->children)) {
+			$this->children = Model_Menu_Item::query(array(
+				'where' => array(
+					array('mitem_parent_id', '=', $this->mitem_id)
+				),
+			))->get();
+			// Sort
+			uasort($this->children, function($a, $b) {
+				return strcmp($a->mitem_sort, $b->mitem_sort);
+			});
+		}
+
+		return $this->children;
 	}
 
 	/**

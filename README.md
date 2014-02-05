@@ -2,7 +2,9 @@
 
 Kiwi Menu is a menu manager for Novius OS. It supports nested menus with different kind of items (text, link, page, wysiwyg...). You can easily develop your own kind of item if the default ones do not fit your needs (see the Driver section in the documentation).
 
-[STILL IN DEVELOPMENT ] Display your menus anywhere using the enhancer and choose how they looks like using the template system (horizontal, vertical, etc...). You can develop your own templates (see the Template section in the documentation).
+To display a menu you have two possibilities :
+- use a template that is compatible with Kiwi Menu (eg. Kiwi Template)
+- integrate yourself (programming knowledge required) using the Driver_Menu (see the Documentation)
 
 # Requirements
 
@@ -18,9 +20,11 @@ After you installed this application in your Novius OS, you will be able to crea
 
 # Documentation
 
-## Driver
+## Drivers
 
-This application uses drivers to build and display the menu's items.
+### Item
+
+This application uses drivers to build and display the a menu item.
 
 These drivers are natively provided :
 * Driver_Item_Text
@@ -28,7 +32,7 @@ These drivers are natively provided :
 * Driver_Item_Page
 * Driver_Item_Wysiwyg
 
-### Structure
+#### Structure
 
 A driver is composed of two files :
 
@@ -60,7 +64,7 @@ class Driver_Item_Example extends Driver_Item {
 }
 ```
 
-### Available drivers
+#### Available drivers
 
 Available drivers are set in the configuration file `kiwi_menu/config/config.php` :
 
@@ -78,7 +82,7 @@ Available drivers are set in the configuration file `kiwi_menu/config/config.php
 
 **Note**: Drivers listed above are the default ones provided by this application.
 
-### Create a driver
+#### Create a driver
 
 You can create a new driver if the existing ones doesn't fit your needs. You just have to create the class file with the required methods (see the **Structure** section above) :
 
@@ -107,6 +111,10 @@ Then add your driver to the list of available drivers:
 });
 ```
 
-### EAV
+#### EAV
 
 Todo
+
+### Menu
+
+This application uses drivers to display a menu.

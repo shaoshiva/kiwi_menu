@@ -63,43 +63,44 @@ class Model_Menu extends \Nos\Orm\Model
 
     protected static $_many_many = array();
 
-	protected $tree	= array();
-
 	/**
-	 * Display the menu
-	 */
-	public function display() {
-		return \View::forge('kiwi_menu::front/template/horizontal/layout', array(
-			'menu'	=> $this,
-			'items'	=> $this->tree()
-		), false);
-	}
-
-	/**
-	 * Returns menu items as a tree
+	 * Returns items by parent item id
 	 *
 	 * @param null $parent_id
 	 * @return array
 	 */
-	public function tree($parent_id = null) {
-		if (empty($this->tree)) {
-			$this->tree = static::build_tree($parent_id);
-		}
-		return $this->tree;
+	public function items($parent_id = null) {
+		// Builds the items tree
+		$items = $this->buildItemsChildren();
+
+		// Gets the items with $parent_id as parent's item id
+		$items = array_filter($items, function($item) use($parent_id) {
+			return $item->mitem_parent_id == $parent_id;
+		});
+
+		return $items;
 	}
 
 	/**
-	 * Builds and returns an items tree recursively
+	 * Builds items children recursively (without any sql query)
 	 *
 	 * @param null $parent_id
-	 * @return array
+	 * @return array|null
 	 */
-	protected function build_tree($parent_id = null) {
+	public function buildItemsChildren($parent_id = null) {
+		// Gets the items with $parent_id as parent's item id
 		$items = array_filter($this->items, function($item) use($parent_id) {
 			return $item->mitem_parent_id == $parent_id;
 		});
+		// Sort items
+		uasort($items, function($a, $b) {
+			return strcmp($a->mitem_sort, $b->mitem_sort);
+		});
+		// Builds children recursively
 		foreach ($items as $item) {
-			$item->children = static::build_tree($item->mitem_id);
+			if (is_null($item->children)) {
+				$item->children = $this->buildItemsChildren($item->mitem_id);
+			}
 		}
 		return $items;
 	}

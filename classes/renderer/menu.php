@@ -51,7 +51,7 @@ class Renderer_Menu extends \Nos\Renderer
 
 		// Builds the tree
 		$tree = \View::forge('kiwi_menu::admin/renderer/menu/layout-tree', array(
-			'items'			=> $menu ? $menu->tree() : array(),
+			'items'			=> $menu ? $menu->items() : array(),
 			'options'		=> $options,
 		), false);
 
