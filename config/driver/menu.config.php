@@ -9,8 +9,8 @@
  */
 
 return array(
-	// Icon
-	'icon'			=> array(
-		'16' 			=> ''
+	'name' => __('Kiwi Menu'),
+	'icon' => array(
+		'16' => ''
 	),
 );
