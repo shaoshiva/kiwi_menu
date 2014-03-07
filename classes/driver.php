@@ -10,7 +10,8 @@ namespace Kiwi\Menu;
 abstract class Driver {
 
     // The menu
-    protected $menu				= null;
+	protected $menu				= null;
+	protected $options			= null;
 
     // Configuration
     protected $config			= null;
@@ -22,23 +23,27 @@ abstract class Driver {
      * Constructor
      *
      * @param null $menu
+	 * @param array $options
      * @return Driver $this
      */
-    public function __construct($menu = null) {
+	public function __construct($menu = null, $options = array()) {
         // Set the menu
         $this->menu = $menu;
+		$this->options = $options;
         // Load the driver configuration
         $this->config = $this->loadConfig();
+		return $this;
     }
 
     /**
      * Returned a forged driver
      *
-     * @param null $menu
-     * @return Driver
-     */
-    public static function forge($menu = null) {
-        return new static($menu);
+	 * @param mixed $menu
+	 * @param array $options
+	 * @return Driver
+	 */
+	public static function forge($menu = null, $options = array()) {
+        return new static($menu, $options);
     }
 
     /**

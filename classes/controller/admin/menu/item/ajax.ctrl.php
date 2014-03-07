@@ -16,11 +16,14 @@ class Controller_Admin_Menu_Item_Ajax extends \Nos\Controller_Admin_Application 
 	 * Edit an item (generates the form)
 	 *
 	 * @param $id
-	 * @return bool|\Fuel\Core\View
+	 * @return bool|\View
 	 * @throws \Exception
 	 */
 	public function action_edit($id) {
 		try {
+			// Get context
+			$context = \Input::get('context');
+
 			// New item or existing one ?
 			$is_new = (empty($id) || !ctype_digit($id));
 
@@ -50,6 +53,7 @@ class Controller_Admin_Menu_Item_Ajax extends \Nos\Controller_Admin_Application 
 				'menu_form_id'		=> \Input::get('form_id'),
 				'item'				=> $item,
 				'item_id'			=> $id,
+				'context'			=> $context,
 				'expander_options'	=> array(
 					'allowExpand'		=> false,
 					'expanded'			=> true,

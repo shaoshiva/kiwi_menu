@@ -16,11 +16,15 @@ class Driver_Item_Wysiwyg extends Driver_Item {
 	 * Builds and returns the item edition form
 	 *
 	 * @param string $content
+	 * @param array $options
 	 * @return string
 	 */
-	public function form($content = null) {
-		// Prepare renderer if new item
-		return parent::form(\View::forge('kiwi_menu::driver/wysiwyg/form', array(
+	public function form($content = null, $options = array()) {
+		if (is_array($content)) {
+			$options = $content;
+			$content = null;
+		}
+		return parent::form(\View::forge('kiwi_menu::driver/wysiwyg/form', \Arr::merge($options, array(
 			'item'				=> $this->item,
 			'content'			=> $content,
 			'expander_options'	=> array(
@@ -35,7 +39,7 @@ class Driver_Item_Wysiwyg extends Driver_Item {
 					'mode' 				=> 'exact',
 				), $this->item, false),
 			),
-		), false)->render());
+		)), false)->render());
 	}
 
 	/**

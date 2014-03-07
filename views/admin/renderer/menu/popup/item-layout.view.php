@@ -12,7 +12,9 @@ Nos\I18n::current_dictionary(array('kiwi_menu::common', 'nos::common'));
 
 ?>
 <div id="<?= $uniqid = uniqid('id_') ?>">
-	<?= $item->driver()->form(); ?>
+	<?= $item->driver()->form(array(
+		'context' => $context
+	)); ?>
 </div>
 <script type="text/javascript">
     require(

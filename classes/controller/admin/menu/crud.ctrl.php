@@ -58,10 +58,22 @@ class Controller_Admin_Menu_Crud extends \Nos\Controller_Admin_Crud
 
 				// Get or create the item
 				$item = $is_new ? Model_Menu_Item::forge() : Model_Menu_Item::find($id);
+
 				if (empty($item)) {
 					// Item not found
 					throw new \Exception(__('Sorry, can\'t find this item. Perhaps it has already been deleted?'));
 				}
+
+				if ($is_new) {
+					$item->mitem_context_is_main = 1;
+				} else {
+					// If not the right context, clone the item
+					if ($item->mitem_context != $menu->menu_context) {
+						$item = clone $item;
+						$item->mitem_context_is_main = 0;
+					}
+				}
+				$item->mitem_context = $menu->menu_context;
 
 				// Populate the item with the submitted data
 				$item->populate(\Arr::merge($properties, array('mitem_menu_id' => $menu->menu_id)));

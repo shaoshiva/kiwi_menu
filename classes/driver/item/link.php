@@ -16,17 +16,22 @@ class Driver_Item_Link extends Driver_Item {
 	 * Builds and returns the item edition form
 	 *
 	 * @param string $content
+	 * @param array $options
 	 * @return string
 	 */
-	public function form($content = null) {
-		return parent::form(\View::forge('kiwi_menu::driver/link/form', array(
+	public function form($content = null, $options = array()) {
+		if (is_array($content)) {
+			$options = $content;
+			$content = null;
+		}
+		return parent::form(\View::forge('kiwi_menu::driver/link/form', \Arr::merge($options, array(
 			'item'				=> $this->item,
 			'content'			=> $content,
 			'expander_options'	=> array(
 				'allowExpand'		=> false,
 				'expanded'			=> true,
 			),
-		), false)->render());
+		)), false)->render());
 	}
 
 	/**

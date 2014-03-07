@@ -10,6 +10,6 @@
 
 namespace Kiwi\Menu\Migrations;
 
-class Driver_Rename extends \Nos\Migration
+class Context extends \Nos\Migration
 {
 }

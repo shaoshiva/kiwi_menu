@@ -18,9 +18,25 @@ class Model_Menu_Item_Attribute extends \Orm\Model {
 	protected static $_title_property = 'miat_key';
 
 	protected static $_properties 	= array(
-		'miat_id',				// primary key
-		'miat_mitem_id',		// foreign key
-		'miat_key',				// attribute column
-		'miat_value',			// value column
+		'miat_id' => array(
+			'default' => null,
+			'data_type' => 'int',
+			'null' => false,
+		),
+		'miat_mitem_id' => array(
+			'default' => null,
+			'data_type' => 'int',
+			'null' => false,
+		),
+		'miat_key' => array(
+			'default' => '',
+			'data_type' => 'varchar',
+			'null' => false,
+		),
+		'miat_value' => array(
+			'default' => '',
+			'data_type' => 'varchar',
+			'null' => false,
+		),
 	);
 }

@@ -16,10 +16,15 @@ class Driver_Item_Page extends Driver_Item {
 	 * Builds and returns the item edition form
 	 *
 	 * @param string $content
+	 * @param array $options
 	 * @return string
 	 */
-	public function form($content = null) {
-		return parent::form(\View::forge('kiwi_menu::driver/page/form', array(
+	public function form($content = null, $options = array()) {
+		if (is_array($content)) {
+			$options = $content;
+			$content = null;
+		}
+		return parent::form(\View::forge('kiwi_menu::driver/page/form', \Arr::merge($options, array(
 			'item'				=> $this->item,
 			'content'			=> $content,
 			'expander_options'	=> array(
@@ -33,11 +38,12 @@ class Driver_Item_Page extends Driver_Item {
 					'id' => !empty($this->item->page_id) ? $this->item->page_id : null,
 				),
 				'treeOptions' => array(
-//					'context' => 'main::en_GB',
+					'context' => \Arr::get($options, 'context', \Nos\Tools_Context::defaultContext()),
 				),
 				'height' => '220px',
+				'contextChange' => true,
 			),
-		), false)->render());
+		)), false)->render());
 	}
 
 	/**

@@ -78,9 +78,23 @@ class Model_Menu_Item extends \Nos\Orm\Model
 			'data_type' => 'datetime',
 			'null' => true,
 		),
+		'mitem_context' => array(
+			'default' => null,
+			'data_type' => 'varchar',
+			'null' => false,
+		),
+		'mitem_context_common_id' => array(
+			'default' => null,
+			'data_type' => 'int',
+			'null' => false,
+		),
+		'mitem_context_is_main' => array(
+			'default' => 0,
+			'data_type' => 'int',
+			'null' => false,
+		),
 	);
 
-	// define the EAV container like so
 	protected static $_eav = array(
 		'attributes' => array(		// we use the statistics relation to store the EAV data
 			'attribute' => 'miat_key',	// the key column in the related table contains the attribute
@@ -88,7 +102,7 @@ class Model_Menu_Item extends \Nos\Orm\Model
 		)
 	);
 
-    protected static $_belongs_to  = array(
+	protected static $_twinnable_belongs_to  = array(
 		'parent' => array(
 			'key_from'       => 'mitem_parent_id',
 			'model_to'       => '\Kiwi\Menu\Model_Menu_Item',
@@ -96,6 +110,9 @@ class Model_Menu_Item extends \Nos\Orm\Model
 			'cascade_save'   => false,
 			'cascade_delete' => false,
 		),
+	);
+
+	protected static $_belongs_to  = array(
 		'menu' => array(
 			'key_from'       => 'mitem_menu_id',
 			'model_to'       => '\Kiwi\Menu\Model_Menu',
@@ -103,19 +120,17 @@ class Model_Menu_Item extends \Nos\Orm\Model
 			'cascade_save'   => false,
 			'cascade_delete' => false,
 		),
-    );
+	);
 
     protected static $_has_many  = array(
 		'attributes' => array(
-			'model_to'	=> '\Kiwi\Menu\Model_Menu_Item_Attribute',
 			'key_from' => 'mitem_id',		// key in this model
+			'model_to'	=> '\Kiwi\Menu\Model_Menu_Item_Attribute',
 			'key_to' => 'miat_mitem_id',	// key in the related model
 			'cascade_save' => true,	// update the related table on save
 			'cascade_delete' => true,	// delete the related data when deleting the parent
 		)
     );
-
-    protected static $_many_many = array();
 
 	protected static $_observers = array(
 		'Orm\\Observer_Self',
@@ -136,6 +151,16 @@ class Model_Menu_Item extends \Nos\Orm\Model
 			'publication_state_property' => 'mitem_published',
 			'publication_start_property' => 'mitem_publication_start',
 			'publication_end_property' => 'mitem_publication_end',
+		),
+		'Nos\Orm_Behaviour_Twinnable' => array(
+			'context_property'      => 'mitem_context',
+			'common_id_property' => 'mitem_context_common_id',
+			'is_main_property' => 'mitem_context_is_main',
+			'common_fields'   => array(
+				'mitem_parent_id',
+				'mitem_sort',
+				'mitem_driver',
+			),
 		),
 	);
 
@@ -183,7 +208,6 @@ class Model_Menu_Item extends \Nos\Orm\Model
 				return strcmp($a->mitem_sort, $b->mitem_sort);
 			});
 		}
-
 		return $this->children;
 	}
 

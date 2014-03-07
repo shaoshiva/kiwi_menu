@@ -30,7 +30,7 @@
 					data-item-title="New <?= $driver_name ?>"
 					data-dialog-options="<?= htmlspecialchars(\Format::forge()->to_json($dialog_options)) ?>">
 				<span class="icon">
-					<?= \Fuel\Core\Html::img(\Arr::get($driver_config, 'icon')) ?>
+					<?= \Html::img(\Arr::get($driver_config, 'icon')) ?>
 				</span>
 				Add a <?= $driver_name ?>
 			</button>
@@ -46,10 +46,10 @@ require(
 	['jquery-nos', 'static/apps/kiwi_menu/js/nestedSortable/jquery.mjs.nestedSortable.js'],
 	function ($) {
 		$(function() {
-			var context = '<?= $menu->menu_context ?>';
 			var $container = $('#<?= $id ?>');
 			var $renderer = $container.find('.renderer > ol');
 			var $add_buttons = $container.find('.add-buttons');
+			var context = <?= \Format::forge($menu->menu_context)->to_json() ?>;
 
 			/**
 			 * Initialize an item
@@ -97,6 +97,7 @@ require(
                                 // Build ajax data
                                 var ajaxData = {
                                     form_id			: $container.attr('id'),
+									context			: context,
                                     mitem_driver 	: item_driver,
                                     mitem_title		: $item.find('> div .label').text().trim()
                                 };
@@ -116,7 +117,7 @@ require(
                                 });
 
                                 $(this).nosDialog($.extend({
-                                    contentUrl: 'admin/kiwi_menu/menu/item/ajax/edit/'+item_id+'/'+context,
+                                    contentUrl: 'admin/kiwi_menu/menu/item/ajax/edit/'+item_id,
                                     ajax : true,
                                     ajaxData: ajaxData,
                                     title: <?= \Format::forge(__('Edit an item'))->to_json() ?>,
@@ -297,7 +298,6 @@ require(
 				name: 'Kiwi\\Menu\\Model_Menu_Item',
 				action: ['delete']
 			}], function(nosEvent) {
-                console.log('nosEvent delete', nosEvent);
 				// @todo Delete items on delete event listen
             });
 
@@ -309,8 +309,6 @@ require(
 
 				// Find item by id
 				var $item = $renderer.find('li[data-item-id="'+id+'"]');
-
-                console.log('item-id', $item);
 
 				// Set values
                 var modified = set_item_values($item, data);

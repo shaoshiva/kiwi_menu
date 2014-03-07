@@ -58,7 +58,6 @@ class Driver_Item {
 				$this->children[$k] = Driver_Item::forge($item);
 			}
 		}
-
 		return $this->children;
     }
 
@@ -66,17 +65,22 @@ class Driver_Item {
 	 * Builds the item's edit form
 	 *
 	 * @param string $content
+	 * @param array $options
 	 * @return string
 	 */
-	public function form($content = null) {
-		return \View::forge('kiwi_menu::driver/form', array(
+	public function form($content = null, $options = array()) {
+		if (is_array($content)) {
+			$options = $content;
+			$content = null;
+		}
+		return \View::forge('kiwi_menu::driver/form', \Arr::merge($options, array(
 			'item'				=> $this->item,
 			'content'			=> $content,
 			'expander_options'	=> array(
 				'allowExpand'		=> true,
 				'expanded'			=> true,
 			),
-		), false)->render();
+		)), false)->render();
 	}
 
 	/**u
